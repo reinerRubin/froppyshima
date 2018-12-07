@@ -1,6 +1,9 @@
-# root
+# /
+## Launch
 
-```
+```bash
+git clone https://github.com/reinerRubin/froppyshima.git
+cd froppyshima/
 sudo docker-compose build
 sudo docker-compose up
 ```
