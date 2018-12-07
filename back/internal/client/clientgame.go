@@ -72,10 +72,6 @@ func (cg *ClientGame) Hit(coord *engine.Coord) (result engine.HitResult, err err
 }
 
 func (cg *ClientGame) Do(fn func() error) error {
-	defer func() {
-		fmt.Println(cg.Game.Render())
-	}()
-
 	err := fn()
 	if err != nil {
 		return err

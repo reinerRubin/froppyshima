@@ -114,7 +114,7 @@ func (s *Ship) InlineInfo() string {
 		state = fmt.Sprintf("alive with %d lives", s.Lives)
 	}
 
-	return fmt.Sprintf("ship (%s) is %s", s.Typo, state)
+	return fmt.Sprintf(`"%s" is %s`, s.Typo, state)
 }
 
 func (s Ships) IsAllDead() bool {
@@ -125,18 +125,4 @@ func (s Ships) IsAllDead() bool {
 	}
 
 	return true
-}
-
-// TODO object stat and String method
-func (s Ships) Stat() (acc string) {
-	for i, ship := range s {
-		last := i == len(s)-1
-
-		acc += fmt.Sprintf("%s - %d", ship.Typo, ship.Lives)
-		if !last {
-			acc += "\n"
-		}
-	}
-
-	return
 }
