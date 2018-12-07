@@ -67,7 +67,7 @@ func (gr *BoltDBGameRepository) Load(id engine.GameID) (*engine.Game, error) {
 	}
 
 	if len(rawGame) == 0 {
-		return nil, fmt.Errorf("game %s not found", id)
+		return nil, fmt.Errorf(`game "%s" was not found`, id)
 	}
 
 	err = json.Unmarshal(rawGame, game)

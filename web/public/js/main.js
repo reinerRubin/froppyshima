@@ -95,7 +95,8 @@ function start(websocketServerLocation) {
 	  gameState.status = "finished";
 	}
       } else {
-	showMessage(data.Error);
+	showMessage(data.Error + ". A new game was started");
+	newGame();
       }
     }
   }
@@ -165,7 +166,7 @@ function start(websocketServerLocation) {
     webSocket.send(JSON.stringify({ID: requestID, method: "load", body: {ID: id}}));
   }
 
-  document.getElementById("new").onclick = function(event) {
+  let newGame = function() {
     let requestID = Math.random().toString();
     gameState.requests[requestID] = {
       method: "new",
@@ -174,6 +175,8 @@ function start(websocketServerLocation) {
     gameState.status = "init";
     webSocket.send(JSON.stringify({ID: requestID, method: "new", body: {}}));
   };
+
+  document.getElementById("new").onclick = newGame;
 }
 
 
@@ -198,7 +201,7 @@ function load(state) {
   pureInit(state.Maxx, state.Maxy);
 
   if (!state.AnyMoreShips) {
-    showMessage("completed game")
+    showMessage("laded game was completed, please start a new one")
   }
 
   if (state.FailHits) {

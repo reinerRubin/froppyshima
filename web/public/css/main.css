@@ -96,6 +96,8 @@
     background-repeat: no-repeat no-repeat;
     background-position-x: 5%;
     background-position-y: 101%;
+
+    overflow: hidden;
 }
 
 #main-frame::after {
