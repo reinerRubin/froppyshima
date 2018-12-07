@@ -1,0 +1,12 @@
+version: '3'
+services:
+  back:
+    build: ./back/
+    ports:
+    - "127.0.0.1:8080:8080"
+  web:
+    build: ./web/
+    ports:
+    - "127.0.0.1:3000:80"
+    depends_on:
+      - back

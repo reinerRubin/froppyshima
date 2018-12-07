@@ -1,0 +1,86 @@
+.title {
+    padding-top: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.game {
+    padding-top: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.cell:hover {
+    background: #88cbdd;
+    cursor: pointer;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    background: #94D0FF;
+}
+
+.cell.killed {
+    background: #FF6AD5;
+}
+
+.cell.checked {
+    background: #8795E8;
+}
+
+
+.messages {
+    height: 250px;
+    overflow: hidden;
+    padding-top: 50px;
+    text-align: center;
+}
+
+.messages .message {
+    padding-top: 3px;
+    font-style: italic;
+}
+
+#code {
+    align-items: center;
+    padding-top: 30px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#code-text {
+    width: 350px;
+    text-align: center;
+    font-style: italic;
+}
+
+.buttons {
+    display: flex;
+}
+.button {
+   width: 100px;
+   height: 30px;
+   line-height: 30px;
+   text-align: center;
+   margin-top: 10px;
+   background: #94D0FF;
+   font-weight: bold;
+}
+
+.button:first-child {
+    margin-right: 4px;
+}
+
+.button:last-child {
+    margin-left: 4px;
+}
+
+
+.button:hover {
+    background: #88cbdd;
+    cursor: pointer;
+}
