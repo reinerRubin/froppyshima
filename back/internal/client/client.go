@@ -1,32 +1,25 @@
 package client
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
 	"github.com/gorilla/websocket"
 	"github.com/reinerRubin/froppyshima/back/internal"
-	"github.com/reinerRubin/froppyshima/back/internal/engine"
 	"github.com/reinerRubin/froppyshima/back/internal/protocol"
 )
 
-const eventBuffer = 100
+const outMessageBuffer = 256
 
 func NewClient(conn *websocket.Conn, ct *ClientContext) *Client {
-	gameEventsChan := make(chan *engine.GameEvent, eventBuffer)
+	rawEvents := make(chan []byte, eventBuffer)
 
 	client := &Client{
-		gameEvents: gameEventsChan,
-		game: &ClientGame{
-			Events:             gameEventsChan,
-			gameRepository:     ct.GameRepository,
-			playedGameRegister: ct.PlayedGameRegister,
-		},
-
+		rawEvents: rawEvents,
+		clientWeb: NewClientWeb(ct, rawEvents),
 		connection: &clientConnection{
 			conn: conn,
-			out:  make(chan []byte, 256),
+			out:  make(chan []byte, outMessageBuffer),
 			in:   make(chan []byte),
 		},
 	}
@@ -41,20 +34,25 @@ type (
 	}
 
 	Client struct {
-		game       *ClientGame
-		gameEvents chan *engine.GameEvent
+		rawEvents chan []byte
+
+		clientWeb  *ClientWeb
 		connection *clientConnection
 	}
 )
 
+// Start starts client related processes
+// it's too naive approach and is not very scalable
 func (c *Client) Start() {
 	go c.connection.readPump()
 	go c.connection.writePump()
+
+	go c.clientWeb.Run()
 	go c.Run()
 }
 
 func (c *Client) Run() {
-	defer c.game.Finalize()
+	defer c.clientWeb.Stop()
 
 	for {
 		select {
@@ -65,133 +63,56 @@ func (c *Client) Run() {
 
 			call, err := protocol.ParseCall(rawCall)
 			if err != nil {
-				log.Printf("corrupt call: %s\n", err)
+				log.Printf("corrupt call: %s", err)
 				continue
 			}
 
-			response := c.processCall(call)
-			rawResponse, err := protocol.MarshallServerResponse(response)
-			if err != nil {
-				panic("we are doomed")
+			if err := c.processCall(call); err != nil {
+				log.Printf("cant process call: %s", err)
 			}
-
-			c.connection.out <- rawResponse
-		case gameEvent, more := <-c.gameEvents:
+		case rawEvent, more := <-c.rawEvents:
 			if !more {
 				return
 			}
 
-			response, err := c.processEvent(gameEvent)
-			if err != nil {
-				log.Printf("corrupt event: %s", gameEvent)
+			if err := c.processRawEvent(rawEvent); err != nil {
+				log.Printf("cant process raw event: %s", err)
 			}
-
-			rawResponse, err := protocol.MarshallServerResponse(response)
-			if err != nil {
-				panic("we are doomed")
-			}
-
-			c.connection.out <- rawResponse
 		}
 	}
 }
 
-func (c *Client) processEvent(e *engine.GameEvent) (*protocol.ServerResponse, error) {
+func (c *Client) processRawEvent(raw []byte) error {
 	event := protocol.NewEvent()
-
-	raw, err := json.Marshal(e)
-	if err != nil {
-		return nil, err
-	}
-
 	event.Body = raw
 
-	return event, nil
+	return c.SendResponse(event)
 }
 
-// TODO move to a register/call pattern (like HTTP) and add a separate marshal/unmoral layer
-func (c *Client) processCall(call *protocol.Call) (response *protocol.ServerResponse) {
-	response = protocol.NewCallResponse(call)
+func (c *Client) processCall(call *protocol.Call) error {
+	response := protocol.NewCallResponse(call)
 
-	switch call.Method {
-	case protocol.MethodNew:
-		gameID, err := c.game.New()
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		resultResponse := protocol.NewResponse{
-			ID: gameID,
-		}
-		rawResponse, err := json.Marshal(resultResponse)
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		response.Body = rawResponse
-	case protocol.MethodLoad:
-		loadArgs := &protocol.LoadArgs{}
-		err := json.Unmarshal(call.Body, loadArgs)
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		info, err := c.game.Load(loadArgs.ID)
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		loadResponse := &protocol.LoadResponse{
-			Maxx: info.Maxx,
-			Maxy: info.Maxy,
-
-			FailHits:    info.FailHits,
-			SuccessHits: info.SuccessHits,
-			FatalHits:   info.FatalHits,
-
-			AnyMoreShips: info.AnyMoreShips,
-		}
-		rawResponse, err := json.Marshal(loadResponse)
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		response.Body = rawResponse
-	case protocol.MethodHit:
-		hitArgs := &protocol.HitArgs{}
-		err := json.Unmarshal(call.Body, hitArgs)
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		result, err := c.game.Hit(&engine.Coord{
-			X: hitArgs.X,
-			Y: hitArgs.Y,
-		})
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		resultResponse := protocol.HitResponse{
-			Result: result,
-		}
-		rawResponse, err := json.Marshal(resultResponse)
-		if err != nil {
-			response.Error = err.Error()
-			return
-		}
-
-		response.Body = rawResponse
-	default:
-		response.Error = fmt.Errorf("unknown method: %s", call.Method).Error()
+	raw, err := NewClientWebRouter(c.clientWeb).Exec(call.Method, call.Body)
+	if err != nil {
+		response.Error = err.Error()
+	} else {
+		response.Body = raw
 	}
 
-	return
+	return c.SendResponse(response)
+}
+
+func (c *Client) SendResponse(response *protocol.ServerResponse) error {
+	rawResponse, err := protocol.MarshallServerResponse(response)
+	if err != nil {
+		return err
+	}
+
+	select {
+	case c.connection.out <- rawResponse:
+	default:
+		return fmt.Errorf("cant send to connection out: overflow")
+	}
+
+	return nil
 }

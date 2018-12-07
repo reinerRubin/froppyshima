@@ -1,7 +1,6 @@
 package client
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -75,7 +74,7 @@ func (c *clientConnection) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		if err != nil {
-			fmt.Printf("writePump error: %s\n", err)
+			log.Printf("writePump error: %s", err)
 		}
 		ticker.Stop()
 		c.conn.Close()

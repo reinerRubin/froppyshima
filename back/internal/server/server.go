@@ -14,9 +14,9 @@ import (
 type Server struct {
 	http *http.Server
 
-	stopOnce      sync.Once
-	stopChannel   chan struct{}
-	stopedChannel chan struct{}
+	stopOnce       sync.Once
+	stopChannel    chan struct{}
+	stoppedChannel chan struct{}
 
 	boltDBProvider *internal.BoltDBProvider
 
@@ -29,8 +29,8 @@ func New() *Server {
 			Addr: ":8080",
 		},
 
-		stopChannel:   make(chan struct{}, 0),
-		stopedChannel: make(chan struct{}, 0),
+		stopChannel:    make(chan struct{}, 0),
+		stoppedChannel: make(chan struct{}, 0),
 	}
 
 	if err := server.Init(); err != nil {
@@ -70,7 +70,7 @@ func (s *Server) Stop() error {
 	s.stopOnce.Do(func() {
 		close(s.stopChannel)
 	})
-	<-s.stopedChannel
+	<-s.stoppedChannel
 
 	return nil
 }
@@ -83,7 +83,7 @@ func (s *Server) run() error {
 
 	s.stopRoutine()
 
-	close(s.stopedChannel)
+	close(s.stoppedChannel)
 
 	return nil
 }
