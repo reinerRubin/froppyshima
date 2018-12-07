@@ -1,5 +1,14 @@
 package engine
 
+var OShip = &ObjectTemplate{
+	Layout: Layout{
+		LayoutLine{1, 1, 1},
+		LayoutLine{1, 0, 1},
+		LayoutLine{1, 1, 1},
+	},
+	Skirt: []int{-1, 0, 1},
+}
+
 var LShip = &ObjectTemplate{
 	Layout: Layout{
 		LayoutLine{1, 0},

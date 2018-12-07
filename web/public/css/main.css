@@ -84,3 +84,28 @@
     background: #88cbdd;
     cursor: pointer;
 }
+
+#main-frame {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background-image: url(/public/image/palm.png);
+    background-repeat: no-repeat no-repeat;
+    background-position-x: 5%;
+    background-position-y: 101%;
+}
+
+#main-frame::after {
+    content: "";
+    background: url(/public/image/main-back.jpg);
+    opacity: 0.3;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+}
