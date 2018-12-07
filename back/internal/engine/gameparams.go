@@ -10,6 +10,12 @@ type ShipTemplate struct {
 var gameShipTemplates func() []*ShipTemplate = func() []*ShipTemplate {
 	return []*ShipTemplate{
 		&ShipTemplate{
+			typo:  "O shaped",
+			char:  'O',
+			ship:  OShip,
+			count: 1,
+		},
+		&ShipTemplate{
 			typo:  "L shaped",
 			char:  'L',
 			ship:  LShip,
@@ -25,7 +31,7 @@ var gameShipTemplates func() []*ShipTemplate = func() []*ShipTemplate {
 			typo:  "Dot shaped",
 			char:  'G',
 			ship:  DotShip,
-			count: 5,
+			count: 2,
 		},
 	}
 }

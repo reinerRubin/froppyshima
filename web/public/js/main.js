@@ -89,7 +89,11 @@ function start(websocketServerLocation) {
 	load(data.Body);
 	bindCellClicks();
 
-	gameState.status = "started";
+	if (data.Body.AnyMoreShips) {
+	  gameState.status = "started";
+	} else {
+	  gameState.status = "finished";
+	}
       } else {
 	showMessage(data.Error);
       }
@@ -195,7 +199,6 @@ function load(state) {
 
   if (!state.AnyMoreShips) {
     showMessage("completed game")
-    gameState.status = "finished"
   }
 
   if (state.FailHits) {

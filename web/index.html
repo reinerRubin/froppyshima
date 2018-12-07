@@ -1,6 +1,5 @@
 <!doctype html>
 <html class="no-js" lang="">
-
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -13,28 +12,29 @@
   </head>
 
   <body>
-    <script src="public/js/main.js"></script>
+    <div id="main-frame">
+      <script src="public/js/main.js"></script>
 
-    <div class="title">
-      <p>Froppyshima the Game</p>
-    </div>
-
-    <div id="code">
-      <input type="text" id="code-text" value="loading..."></input>
-
-      <div class="buttons">
-	<div class="button" id="new">New</div>
-	<div class="button" id="load-by-code">Load</div>
+      <div class="title">
+	<p>Froppyshima the Game</p>
       </div>
-    </div>
 
-    <div id="game" class="game">
-      <table id="matrix" class="matrix">
-      </table>
-    </div>
+      <div id="code">
+	<input type="text" id="code-text" value="loading..."></input>
+
+	<div class="buttons">
+	  <div class="button" id="new">New</div>
+	  <div class="button" id="load-by-code">Load</div>
+	</div>
+      </div>
+
+      <div id="game" class="game">
+	<table id="matrix" class="matrix">
+	</table>
+      </div>
 
       <div class="messages">
       </div>
+    </div>
   </body>
-
 </html>
