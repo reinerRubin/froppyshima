@@ -21,6 +21,8 @@ type ClientGame struct {
 func (cg *ClientGame) New() (engine.GameID, error) {
 	var gameID engine.GameID
 
+	cg.StopPlay(cg.GameID)
+
 	cg.Game = engine.NewGame()
 	err := cg.Game.Init()
 	if err != nil {
