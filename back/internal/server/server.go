@@ -25,17 +25,17 @@ type Server struct {
 	clientContext *client.ClientContext
 }
 
-func New(config *config.Config) *Server {
+func New(config *config.Config) (*Server, error) {
 	server := &Server{
 		stopChannel:    make(chan struct{}, 0),
 		stoppedChannel: make(chan struct{}, 0),
 	}
 
 	if err := server.Init(config); err != nil {
-		log.Fatalf("cant init server: %s", err)
+		return nil, err
 	}
 
-	return server
+	return server, nil
 }
 
 func (s *Server) Init(config *config.Config) error {
@@ -51,7 +51,7 @@ func (s *Server) Init(config *config.Config) error {
 
 	gameRepository, err := internal.NewBoltDBGameRepository(dbProvider)
 	if err != nil {
-		log.Fatalf("cant init game repository!: %s", err)
+		return err
 	}
 
 	s.clientContext = &client.ClientContext{

@@ -18,33 +18,32 @@ type ClientGame struct {
 	Events chan *engine.GameEvent
 }
 
-func (cg *ClientGame) New() (engine.GameID, error) {
-	var gameID engine.GameID
-
+func (cg *ClientGame) New() (gameID engine.GameID, err error) {
 	cg.StopPlay(cg.GameID)
 
-	cg.Game = engine.NewGame()
-	err := cg.Game.Init()
+	cg.Game, err = engine.NewGame()
 	if err != nil {
-		return gameID, err
+		return
 	}
 
-	if err := cg.Game.PutShips(); err != nil {
-		return gameID, err
+	if err = cg.Game.PutShips(); err != nil {
+		return
 	}
 
-	gameID = engine.NewGameID()
-	if success := cg.RegisterPlay(gameID); !success {
-		return gameID, fmt.Errorf("cant start game (already played): %s", gameID)
+	newGameID := engine.NewGameID()
+	if success := cg.RegisterPlay(newGameID); !success {
+		err = fmt.Errorf("cant start game (already played): %s", newGameID)
+		return
 	}
 
-	cg.GameID = gameID
-	if err := cg.Save(); err != nil {
+	cg.GameID = newGameID
+	gameID = cg.GameID
+	if err = cg.Save(); err != nil {
 		cg.StopPlay(cg.GameID)
-		return cg.GameID, err
+		return
 	}
 
-	return cg.GameID, nil
+	return
 }
 
 func (cg *ClientGame) Load(id engine.GameID) (*engine.GameMinInfo, error) {
