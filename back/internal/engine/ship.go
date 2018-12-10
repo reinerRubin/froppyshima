@@ -32,31 +32,29 @@ func NewShip(template *ShipTemplate, object *Object) *Ship {
 		Typo:     template.typo,
 		Object:   object,
 		Char:     template.char,
-		Segments: NewShipSegments(object),
+		Segments: NewShipSegments(object.Template.Layout),
 	}
 	ship.Lives = len(ship.Segments)
 	return ship
 }
 
-func NewShipSegments(o *Object) []*ShipSegment {
+func NewShipSegments(l Layout) []*ShipSegment {
+	// TODO allocate memory properly
 	segements := make([]*ShipSegment, 0)
 
-	for y := range o.Template.Layout {
-		for x := range o.Template.Layout[y] {
-			if o.Template.Layout[y][x] == 0 {
-				continue
-			}
-
-			segements = append(segements, &ShipSegment{
-				Status: ShipSegmentStatusAlive,
-				Coord:  NewCoord(x, y),
-			})
-		}
-	}
+	l.ForEachNotNullYX(func(lCoord *Coord) (stop bool, err error) {
+		segements = append(segements, &ShipSegment{
+			Status: ShipSegmentStatusAlive,
+			Coord:  lCoord,
+		})
+		return false, nil
+	})
 
 	return segements
 }
 
+// UnderHit applies a hit to the ship
+// TODO: use hit skirt
 func (s *Ship) UnderHit(f *Hit) (wounded bool, killed bool) {
 	for _, segment := range s.Segments {
 		asegmentCoord := s.Object.Coord.Shift(segment.Coord)

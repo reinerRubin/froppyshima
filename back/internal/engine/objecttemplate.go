@@ -18,6 +18,8 @@ func (s ObjectTemplate) Copy() *ObjectTemplate {
 	}
 }
 
+// Rotate returns the rotated layout
+// TODO use matrix multiplication
 func (s Layout) Rotate() (rotated Layout) {
 	rotated = make(Layout, len(s[0]))
 	for y := range rotated {
@@ -33,7 +35,8 @@ func (s Layout) Rotate() (rotated Layout) {
 	return
 }
 
-// TODO make me smart; we can archive rotation via smart index swapping
+// TODO make me better;
+// we can archive a rotation via the matrix multiplication (rotation matrix)
 func (s Layout) RotateNTimes(times int) (rotated Layout) {
 	times = times % 4
 
@@ -56,6 +59,27 @@ func (s Layout) Copy() (copied Layout) {
 	}
 
 	return
+}
+
+func (s Layout) ForEachNotNullYX(fn func(coord *Coord) (stop bool, err error)) error {
+	for y := range s {
+		for x := range s[y] {
+			if s[y][x] == 0 {
+				continue
+			}
+
+			stop, err := fn(NewCoord(x, y))
+			if err != nil {
+				return err
+			}
+
+			if stop {
+				return nil
+			}
+		}
+	}
+
+	return nil
 }
 
 func (st Layout) String() (rendered string) {

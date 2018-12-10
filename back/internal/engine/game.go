@@ -128,9 +128,9 @@ tryNextRotation:
 	return nil, fmt.Errorf("cant put ship: %s", template.Layout)
 }
 
-// Render shows game state; Current implementation is very primitive;
+// DebugRender shows game state; Current implementation is very primitive;
 // TODO ask objects to draw them self and merge results
-func (g *Game) Render() (render string) {
+func (g *Game) DebugRender() (render string) {
 	for yf := 0; yf < g.Field.Maxy; yf++ {
 		for xf := 0; xf < g.Field.Maxx; xf++ {
 			cell := "." // emptyCell
