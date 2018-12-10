@@ -266,10 +266,14 @@ func (g *Game) PullEvents() []*GameEvent {
 
 func (g *Game) MinInfo() *GameMinInfo {
 	info := &GameMinInfo{
-		Maxx:         g.Field.Maxx,
-		Maxy:         g.Field.Maxy,
-		FailHits:     make([]*Coord, 0, len(g.Hits)),
-		SuccessHits:  make([]*Coord, 0),
+		Maxx: g.Field.Maxx,
+		Maxy: g.Field.Maxy,
+
+		// idk len hits is probably an overkill
+		FailHits:    make([]*Coord, 0, len(g.Hits)),
+		SuccessHits: make([]*Coord, 0, len(g.Hits)),
+		FatalHits:   make([]*Coord, 0, len(g.Hits)),
+
 		AnyMoreShips: !g.Ships.IsAllDead(),
 	}
 
