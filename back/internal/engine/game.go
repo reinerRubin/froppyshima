@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 )
@@ -29,8 +28,8 @@ type (
 )
 
 // NewGame is the game constructor
-func NewGame() (game *Game) {
-	game = &Game{
+func NewGame() (*Game, error) {
+	game := &Game{
 		Ships: make([]*Ship, 0),
 		Hits:  make([]*Hit, 0),
 		Field: &Field{
@@ -39,12 +38,11 @@ func NewGame() (game *Game) {
 		},
 	}
 
-	err := game.Init()
-	if err != nil {
-		log.Fatalf("cant init game: %s", err)
+	if err := game.Init(); err != nil {
+		return nil, err
 	}
 
-	return
+	return game, nil
 }
 
 // Init inits the game

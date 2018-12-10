@@ -25,7 +25,10 @@ func runApp() error {
 		return fmt.Errorf("cant init cfg: %s", err)
 	}
 
-	server := server.New(config)
+	server, err := server.New(config)
+	if err != nil {
+		return err
+	}
 	if err := server.Start(); err != nil {
 		return err
 	}
