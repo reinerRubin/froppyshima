@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -9,6 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/reinerRubin/froppyshima/back/internal"
 	"github.com/reinerRubin/froppyshima/back/internal/client"
+	"github.com/reinerRubin/froppyshima/back/internal/config"
 )
 
 type Server struct {
@@ -23,25 +25,25 @@ type Server struct {
 	clientContext *client.ClientContext
 }
 
-func New() *Server {
+func New(config *config.Config) *Server {
 	server := &Server{
-		http: &http.Server{
-			Addr: ":8080",
-		},
-
 		stopChannel:    make(chan struct{}, 0),
 		stoppedChannel: make(chan struct{}, 0),
 	}
 
-	if err := server.Init(); err != nil {
+	if err := server.Init(config); err != nil {
 		log.Fatalf("cant init server: %s", err)
 	}
 
 	return server
 }
 
-func (s *Server) Init() error {
-	dbProvider, err := internal.NewBoltDBProvider()
+func (s *Server) Init(config *config.Config) error {
+	s.http = &http.Server{
+		Addr: s.ServerAddr(config.Server.Port),
+	}
+
+	dbProvider, err := internal.NewBoltDBProvider(config.BoltDB)
 	if err != nil {
 		return err
 	}
@@ -103,7 +105,8 @@ func (s *Server) stopRoutine() {
 var Upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin:     func(*http.Request) bool { return true },
+	// not worth for a test application
+	CheckOrigin: func(*http.Request) bool { return true },
 }
 
 func (s *Server) StartGame(w http.ResponseWriter, r *http.Request) {
@@ -114,4 +117,8 @@ func (s *Server) StartGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client.NewClient(conn, s.clientContext).Start()
+}
+
+func (s *Server) ServerAddr(port int) string {
+	return fmt.Sprintf(":%d", port)
 }

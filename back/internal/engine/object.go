@@ -1,14 +1,11 @@
 package engine
 
-type (
-	Object struct {
-		Coord    *Coord
-		Template *ObjectTemplate
-	}
-)
+type Object struct {
+	Coord    *Coord
+	Template *ObjectTemplate
+}
 
-// TODO optimaize me
-// TODO "skirt" collision
+// TODO optimaize; "skirt" collision; remove complexity
 func (o *Object) IsConflicted(other *Object) bool {
 	for y := range o.Template.Layout {
 		for x := range o.Template.Layout[y] {
