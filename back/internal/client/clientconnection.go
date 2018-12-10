@@ -29,18 +29,13 @@ type clientConnection struct {
 
 var expectedCodes = []int{websocket.CloseGoingAway, websocket.CloseAbnormalClosure}
 
-// readPump pumps messages from the websocket connection to the hub.
-//
-// The application runs readPump in a per-connection goroutine. The application
-// ensures that there is at most one reader on a connection by executing all
-// reads from this goroutine.
-func (c *clientConnection) readPump() {
+func (c *clientConnection) read() {
 	defer func() {
 		c.conn.Close()
 		close(c.in)
 	}()
 
-	{ // init read pump
+	{ // init read
 		if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
 			return
 		}
@@ -62,19 +57,13 @@ func (c *clientConnection) readPump() {
 		c.in <- message
 	}
 }
-
-// writePump pumps messages from the hub to the websocket connection.
-//
-// A goroutine running writePump is started for each connection. The
-// application ensures that there is at most one writer to a connection by
-// executing all writes from this goroutine.
-func (c *clientConnection) writePump() {
+func (c *clientConnection) write() {
 	var err error
 
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		if err != nil {
-			log.Printf("writePump error: %s", err)
+			log.Printf("write error: %s", err)
 		}
 		ticker.Stop()
 		c.conn.Close()

@@ -44,8 +44,8 @@ type (
 // Start starts client related processes
 // it's too naive approach and is not very scalable
 func (c *Client) Start() {
-	go c.connection.readPump()
-	go c.connection.writePump()
+	go c.connection.read()
+	go c.connection.write()
 
 	go c.clientWeb.Run()
 	go c.Run()
