@@ -39,7 +39,7 @@ func NewShip(template *ShipTemplate, object *Object) *Ship {
 }
 
 func NewShipSegments(l Layout) []*ShipSegment {
-	// TODO allocate memory properly
+	// TODO allocate memory wisely
 	segements := make([]*ShipSegment, 0)
 
 	l.ForEachNotNullYX(func(lCoord *Coord) (stop bool, err error) {
@@ -54,7 +54,7 @@ func NewShipSegments(l Layout) []*ShipSegment {
 }
 
 // UnderHit applies a hit to the ship
-// TODO: use hit skirt
+// TODO: use hit skirt; we can sum two matrices and find values > 1
 func (s *Ship) UnderHit(f *Hit) (wounded bool, killed bool) {
 	for _, segment := range s.Segments {
 		asegmentCoord := s.Object.Coord.Shift(segment.Coord)

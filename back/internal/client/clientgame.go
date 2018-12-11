@@ -82,7 +82,7 @@ func (cg *ClientGame) Do(fn func() error) error {
 		return err
 	}
 
-	// TODO mv to separate process and make circular list
+	// TODO mv to a separate process and make a circular list
 	events := cg.Game.PullEvents()
 	for _, event := range events {
 		select {
