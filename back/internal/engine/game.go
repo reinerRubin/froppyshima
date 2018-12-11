@@ -129,7 +129,7 @@ tryNextRotation:
 }
 
 // DebugRender shows game state; Current implementation is very primitive;
-// TODO ask objects to draw them self and merge results
+// TODO ask objects to draw themself and merge results
 func (g *Game) DebugRender() (render string) {
 	for yf := 0; yf < g.Field.Maxy; yf++ {
 		for xf := 0; xf < g.Field.Maxx; xf++ {
@@ -173,7 +173,7 @@ func (g *Game) ShipObjects() []*Object {
 	return objects
 }
 
-// ToRender resurns all in game objects
+// ToRender returns all in game objects to render
 func (g *Game) ToRender() []Render {
 	objects := make([]Render, 0, len(g.Ships))
 
@@ -214,6 +214,7 @@ func (g *Game) DotHit(c *Coord) (HitResult, error) {
 					continue
 				}
 				g.KilledShip(ship)
+
 				if g.Ships.IsAllDead() {
 					g.GameOwer()
 				}
@@ -261,6 +262,7 @@ func (g *Game) AddEvent(e *GameEvent) {
 func (g *Game) PullEvents() []*GameEvent {
 	events := g.Events
 	g.Events = make([]*GameEvent, 0)
+
 	return events
 }
 
@@ -269,7 +271,7 @@ func (g *Game) MinInfo() *GameMinInfo {
 		Maxx: g.Field.Maxx,
 		Maxy: g.Field.Maxy,
 
-		// idk len hits is probably an overkill
+		// idk len(hits) is probably an overkill
 		FailHits:    make([]*Coord, 0, len(g.Hits)),
 		SuccessHits: make([]*Coord, 0, len(g.Hits)),
 		FatalHits:   make([]*Coord, 0, len(g.Hits)),

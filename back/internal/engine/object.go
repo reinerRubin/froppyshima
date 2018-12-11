@@ -7,7 +7,8 @@ type Object struct {
 	Template *ObjectTemplate
 }
 
-// TODO optimaize; "skirt" collision; remove complexity
+// TODO optimize this, "skirt" collision
+// we can sum two matrices and check collisions for one iterate
 func (o *Object) IsConflicted(other *Object) (collision bool) {
 	err := o.Template.Layout.ForEachNotNullYX(func(lCoord *Coord) (stop bool, err error) {
 		isCollision := func(coord *Coord) (collision bool) {
@@ -26,7 +27,7 @@ func (o *Object) IsConflicted(other *Object) (collision bool) {
 			return
 		}
 
-		// TODO check "other object" skirt; it can be bigger;
+		// TODO check "other object" skirt; it can be bigger
 		for _, skx := range o.Template.Skirt {
 			for _, sky := range o.Template.Skirt {
 				if isCollision(NewCoord(skx, sky).Shift(lCoord)) {

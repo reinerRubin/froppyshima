@@ -35,8 +35,7 @@ func (s Layout) Rotate() (rotated Layout) {
 	return
 }
 
-// TODO make me better;
-// we can archive a rotation via the matrix multiplication (rotation matrix)
+// TODO we can archive a rotation via the matrix multiplication
 func (s Layout) RotateNTimes(times int) (rotated Layout) {
 	times = times % 4
 
