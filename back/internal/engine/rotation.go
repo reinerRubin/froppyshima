@@ -16,11 +16,3 @@ var rotationCoefficientsList = precalculatedRotationCoefficients{
 func coefficients(n int) *rotationCoefficients {
 	return rotationCoefficientsList[n%4]
 }
-
-func abs(i int) int {
-	if i < 0 {
-		return i * -1
-	}
-
-	return i
-}
