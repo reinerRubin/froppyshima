@@ -48,7 +48,7 @@ func TestNewShipSegments(t *testing.T) {
 	}
 
 	for _, testData := range testDataVector {
-		actualSegments := NewShipSegments(testData.layout)
+		actualSegments := newShipSegments(testData.layout)
 		if len(actualSegments) != len(testData.segments) {
 			t.Errorf("%s test failed on len check", testData.label)
 		}
@@ -118,7 +118,7 @@ func TestUnderHit(t *testing.T) {
 					Template: LShip.Copy(),
 				},
 				Char:     'L',
-				Segments: NewShipSegments(LShip.Layout),
+				Segments: newShipSegments(LShip.Layout),
 				Lives:    4,
 			},
 			hits:    []*Hit{newDotHit(0, 0)},
@@ -134,7 +134,7 @@ func TestUnderHit(t *testing.T) {
 					Template: LShip.Copy(),
 				},
 				Char:     'L',
-				Segments: NewShipSegments(LShip.Layout),
+				Segments: newShipSegments(LShip.Layout),
 				Lives:    4,
 			},
 			hits: []*Hit{

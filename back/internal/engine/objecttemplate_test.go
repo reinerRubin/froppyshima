@@ -33,13 +33,13 @@ func TestRotate(t *testing.T) {
 				LayoutLine{0, 0, 0, 1}},
 
 			after: Layout{
-				LayoutLine{0, 1},
-				LayoutLine{0, 1},
-				LayoutLine{0, 1},
-				LayoutLine{1, 1}},
+				LayoutLine{1, 1},
+				LayoutLine{1, 0},
+				LayoutLine{1, 0},
+				LayoutLine{1, 0}},
 		},
 		&testData{
-			label:       "two rotation",
+			label:       "second rotation",
 			rotateTimes: 2,
 			before: Layout{
 				LayoutLine{1, 1, 1, 1},
@@ -49,8 +49,33 @@ func TestRotate(t *testing.T) {
 				LayoutLine{1, 0, 0, 0},
 				LayoutLine{1, 1, 1, 1}},
 		},
+		&testData{
+			label:       "thrid rotation",
+			rotateTimes: 3,
+			before: Layout{
+				LayoutLine{1, 1, 1, 1},
+				LayoutLine{0, 0, 0, 1}},
+
+			after: Layout{
+				LayoutLine{0, 1},
+				LayoutLine{0, 1},
+				LayoutLine{0, 1},
+				LayoutLine{1, 1}},
+		},
+		&testData{
+			label:       "thrid rotation",
+			rotateTimes: 4,
+			before: Layout{
+				LayoutLine{1, 1, 1, 1},
+				LayoutLine{0, 0, 0, 1}},
+
+			after: Layout{
+				LayoutLine{1, 1, 1, 1},
+				LayoutLine{0, 0, 0, 1}},
+		},
 	}
 
+nextTest:
 	for _, testData := range testDataVector {
 		rotated := testData.before.RotateNTimes(testData.rotateTimes)
 
@@ -65,7 +90,9 @@ func TestRotate(t *testing.T) {
 
 			for x := range rotated[y] {
 				if rotated[y][x] != testData.after[y][x] {
-					t.Errorf("%s test failed", testData.label)
+					t.Errorf("%s test failed; excepted \n%s \n vs actual \n%s\n",
+						testData.label, testData.after, rotated)
+					continue nextTest
 				}
 			}
 		}

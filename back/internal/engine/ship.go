@@ -27,18 +27,18 @@ type (
 	Ships []*Ship
 )
 
-func NewShip(template *ShipTemplate, object *Object) *Ship {
+func newShip(template *shipTemplate, object *Object) *Ship {
 	ship := &Ship{
 		Typo:     template.typo,
 		Object:   object,
 		Char:     template.char,
-		Segments: NewShipSegments(object.Template.Layout),
+		Segments: newShipSegments(object.Template.Layout),
 	}
 	ship.Lives = len(ship.Segments)
 	return ship
 }
 
-func NewShipSegments(l Layout) []*ShipSegment {
+func newShipSegments(l Layout) []*ShipSegment {
 	// TODO allocate memory wisely
 	segements := make([]*ShipSegment, 0)
 

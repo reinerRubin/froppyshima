@@ -33,6 +33,8 @@ func New() (*Config, error) {
 	return cfg, nil
 }
 
+// I am aware about the viper and other libraries and probably would use them in real projects
+// but here I wanted to try .reflect library
 func initCfgWithEnv(c interface{}) error {
 	cPtrValue := reflect.ValueOf(c)
 	if cPtrValue.Kind() != reflect.Ptr || cPtrValue.Elem().Kind() != reflect.Struct {
