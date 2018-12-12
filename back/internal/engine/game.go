@@ -53,7 +53,7 @@ func (g *Game) Init() error {
 
 // PutShips puts ships to random positions
 func (g *Game) PutShips() error {
-	templates := gameShipTemplates()
+	templates := getGameShipTemplates()
 
 	for len(templates) > 0 {
 		templateNumber := rand.Intn(len(templates))
@@ -64,7 +64,7 @@ func (g *Game) PutShips() error {
 			return err
 		}
 
-		g.Ships = append(g.Ships, NewShip(template, object))
+		g.Ships = append(g.Ships, newShip(template, object))
 
 		template.count--
 		if template.count == 0 {

@@ -1,33 +1,34 @@
 package engine
 
-type ShipTemplate struct {
+type shipTemplate struct {
 	typo  string
 	char  rune
 	ship  *ObjectTemplate
 	count int
 }
 
-var gameShipTemplates func() []*ShipTemplate = func() []*ShipTemplate {
-	return []*ShipTemplate{
-		&ShipTemplate{
+// hardcoded game params
+func getGameShipTemplates() []*shipTemplate {
+	return []*shipTemplate{
+		&shipTemplate{
 			typo:  "O shaped",
 			char:  'O',
 			ship:  OShip,
 			count: 1,
 		},
-		&ShipTemplate{
+		&shipTemplate{
 			typo:  "L shaped",
 			char:  'L',
 			ship:  LShip,
 			count: 1,
 		},
-		&ShipTemplate{
+		&shipTemplate{
 			typo:  "I shaped",
 			char:  'I',
 			ship:  IShip,
 			count: 1,
 		},
-		&ShipTemplate{
+		&shipTemplate{
 			typo:  "Dot shaped",
 			char:  'G',
 			ship:  DotShip,

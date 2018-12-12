@@ -18,33 +18,38 @@ func (s ObjectTemplate) Copy() *ObjectTemplate {
 	}
 }
 
-// Rotate returns the rotated layout
-// TODO use matrix multiplication
-func (s Layout) Rotate() (rotated Layout) {
-	rotated = make(Layout, len(s[0]))
-	for y := range rotated {
-		rotated[y] = make(LayoutLine, len(s))
-	}
-
-	for y := range s {
-		for x := range s[y] {
-			rotated[x][len(s)-y-1] = s[y][x]
-		}
-	}
-
-	return
-}
-
-// TODO we can archive a rotation via the matrix multiplication
+// RotateNTimes rotates  the layout counterclockwise
 func (s Layout) RotateNTimes(times int) (rotated Layout) {
 	times = times % 4
-
 	if times == 0 {
 		return s.Copy()
 	}
 
-	rotated = s.Rotate()
-	rotated = rotated.RotateNTimes(times - 1)
+	cfc := coefficients(times)
+	ylen := abs(len(s[0])*cfc.sin + len(s)*cfc.cos)
+	xlen := abs(len(s)*cfc.sin + len(s[0])*cfc.cos)
+
+	rotated = make(Layout, ylen)
+	for y := range rotated {
+		rotated[y] = make(LayoutLine, xlen)
+	}
+
+	for y := range s {
+		for x := range s[y] {
+			ynew := x*cfc.sin + y*cfc.cos
+			xnew := x*cfc.cos - y*cfc.sin
+
+			// shift coords back to the positive I quarter
+			if times == 1 || times == 2 {
+				ynew += ylen - 1
+			}
+			if times == 2 || times == 3 {
+				xnew += xlen - 1
+			}
+
+			rotated[ynew][xnew] = s[y][x]
+		}
+	}
 
 	return
 }
