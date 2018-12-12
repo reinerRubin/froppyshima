@@ -26,26 +26,27 @@ func (s Layout) RotateNTimes(times int) (rotated Layout) {
 	}
 
 	cfc := coefficients(times)
-	ylen := abs(len(s[0])*cfc.sin + len(s)*cfc.cos)
-	xlen := abs(len(s)*cfc.sin + len(s[0])*cfc.cos)
+	ylen := absInt(len(s[0])*cfc.sin + len(s)*cfc.cos)
+	xlen := absInt(len(s)*cfc.sin + len(s[0])*cfc.cos)
 
 	rotated = make(Layout, ylen)
 	for y := range rotated {
 		rotated[y] = make(LayoutLine, xlen)
 	}
 
+	// shift coords back to the positive first quarter
+	var yshift, xshift int
+	if times == 1 || times == 2 {
+		yshift = ylen - 1
+	}
+	if times == 2 || times == 3 {
+		xshift = xlen - 1
+	}
+
 	for y := range s {
 		for x := range s[y] {
-			ynew := x*cfc.sin + y*cfc.cos
-			xnew := x*cfc.cos - y*cfc.sin
-
-			// shift coords back to the positive I quarter
-			if times == 1 || times == 2 {
-				ynew += ylen - 1
-			}
-			if times == 2 || times == 3 {
-				xnew += xlen - 1
-			}
+			ynew := x*cfc.sin + y*cfc.cos + yshift
+			xnew := x*cfc.cos - y*cfc.sin + xshift
 
 			rotated[ynew][xnew] = s[y][x]
 		}
