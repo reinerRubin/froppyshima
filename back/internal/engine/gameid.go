@@ -7,8 +7,8 @@ type GameID uuid.UUID
 func NewGameID() GameID {
 	return GameID(uuid.New())
 }
-func (gid GameID) String() string {
-	return uuid.UUID(gid).String()
+func (id GameID) String() string {
+	return uuid.UUID(id).String()
 }
 
 // MarshalText implements encoding.TextMarshaler.

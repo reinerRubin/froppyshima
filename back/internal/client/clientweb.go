@@ -38,8 +38,8 @@ func NewClientWeb(ct *ClientContext, rawEvents chan<- []byte) *ClientWeb {
 		rawGameEvents: rawEvents,
 		gameEvents:    gameEventsChan,
 
-		stopChannel:    make(chan struct{}, 0),
-		stoppedChannel: make(chan struct{}, 0),
+		stopChannel:    make(chan struct{}),
+		stoppedChannel: make(chan struct{}),
 
 		game: &ClientGame{
 			Events:             gameEventsChan,

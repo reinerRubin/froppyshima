@@ -27,8 +27,8 @@ type Server struct {
 
 func New(config *config.Config) (*Server, error) {
 	server := &Server{
-		stopChannel:    make(chan struct{}, 0),
-		stoppedChannel: make(chan struct{}, 0),
+		stopChannel:    make(chan struct{}),
+		stoppedChannel: make(chan struct{}),
 	}
 
 	if err := server.Init(config); err != nil {
@@ -79,7 +79,7 @@ func (s *Server) Stop() error {
 
 func (s *Server) run() error {
 	http.HandleFunc("/ws", s.StartGame)
-	go s.http.ListenAndServe()
+	go log.Fatalf("cant listen and serve: %s", s.http.ListenAndServe())
 
 	<-s.stopChannel
 

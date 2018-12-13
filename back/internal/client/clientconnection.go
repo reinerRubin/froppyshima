@@ -58,13 +58,14 @@ func (c *clientConnection) read() {
 	}
 }
 func (c *clientConnection) write() {
-	var err error
+	if err := c.runWrite(); err != nil {
+		log.Printf("write error: %s", err)
+	}
+}
 
+func (c *clientConnection) runWrite() error {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
-		if err != nil {
-			log.Printf("write error: %s", err)
-		}
 		ticker.Stop()
 		c.conn.Close()
 	}()
@@ -72,34 +73,32 @@ func (c *clientConnection) write() {
 	for {
 		select {
 		case message, ok := <-c.out:
-			if err = c.conn.SetWriteDeadline(time.Now().Add(writeWait)); err != nil {
-				return
+			if err := c.conn.SetWriteDeadline(time.Now().Add(writeWait)); err != nil {
+				return err
 			}
 			if !ok {
-				// The hub closed the channel.
-				err = c.conn.WriteMessage(websocket.CloseMessage, []byte{})
-				return
+				err := c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return err
 			}
 
 			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
-				return
+				return err
 			}
-			_, err = w.Write(message)
-			if err != nil {
-				return
+			if _, err = w.Write(message); err != nil {
+				return err
 			}
 
 			if err := w.Close(); err != nil {
-				return
+				return err
 			}
 		case <-ticker.C:
-			err = c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-			if err != nil {
-				return
+			if err := c.conn.SetWriteDeadline(time.Now().Add(writeWait)); err != nil {
+				return err
 			}
-			if err = c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				return
+
+			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				return err
 			}
 		}
 	}
