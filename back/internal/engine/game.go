@@ -75,9 +75,9 @@ func (g *Game) PutShips() error {
 	return nil
 }
 
-// oh boy; It's kind of Knapsack problem. This is a naive and terrible implementation
-// because a full solution seems too complicated for a test application;
-// so we only try to rotate
+// oh boy; It's kind of Knapsack problem if the game field is small enough.
+// This is a naive and terrible implementation because a full solution seems
+// too complicated for a test application; so we only try to rotate
 // =
 // We get all the variants for the object and choose one instead of trying to put it randomly
 // It does not good for sparse fields but work well with small one;
