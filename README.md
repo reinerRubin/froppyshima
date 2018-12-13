@@ -36,7 +36,6 @@ Currently the client (client.go) seems to use too many goroutines and maybe too 
 
 
 ##### Engine package
-* matrices must be rotated via the matrices multiplication instead of a naive approach
 * finding intersections between objects must be optimized. Current implementation is too expensive
 * some "ideas" like object skirt are not fully implemented and used ad hoc for the task
 * putting ships at random positions must be also optimized (probably using adaptive strategies)
