@@ -42,7 +42,7 @@ func newShipSegments(l Layout) []*ShipSegment {
 	// TODO allocate memory wisely
 	segements := make([]*ShipSegment, 0)
 
-	l.ForEachNotNullYX(func(lCoord *Coord) (stop bool, err error) {
+	_ = l.ForEachNotNullYX(func(lCoord *Coord) (stop bool, err error) {
 		segements = append(segements, &ShipSegment{
 			Status: ShipSegmentStatusAlive,
 			Coord:  lCoord,
