@@ -216,7 +216,7 @@ func (g *Game) DotHit(c *Coord) (HitResult, error) {
 				g.KilledShip(ship)
 
 				if g.Ships.IsAllDead() {
-					g.GameOwer()
+					g.GameOver()
 				}
 
 			}
@@ -230,9 +230,9 @@ func (g *Game) DotHit(c *Coord) (HitResult, error) {
 	return result, nil
 }
 
-func (g *Game) GameOwer() {
+func (g *Game) GameOver() {
 	g.AddEvent(&GameEvent{
-		GameOwer: &GameOwer{
+		GameOver: &GameOver{
 			Message: "this is the end my only friend @ congratulation!",
 		},
 	})

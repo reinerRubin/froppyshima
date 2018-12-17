@@ -39,9 +39,9 @@ function start(websocketServerLocation) {
   webSocket.onmessage = function (event) {
     let data = JSON.parse(event.data);
 
-    if (!data.ID && data.Body && data.Body.GameOwer) {
+    if (!data.ID && data.Body && data.Body.GameOver) {
       gameState.status = "finished"
-      showMessage(data.Body.GameOwer.Message)
+      showMessage(data.Body.GameOver.Message)
     }
 
     if (!data.ID && data.Body && data.Body.ShipIsDestroyed) {
