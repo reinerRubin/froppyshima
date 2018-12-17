@@ -2,12 +2,12 @@ package engine
 
 type (
 	GameEvent struct {
-		GameOwer        *GameOwer
+		GameOver        *GameOver
 		ShipIsWounded   *ShipIsWounded
 		ShipIsDestroyed *ShipIsDestroyed
 	}
 
-	GameOwer struct {
+	GameOver struct {
 		Message string
 	}
 
@@ -22,8 +22,8 @@ type (
 )
 
 func (e *GameEvent) String() string {
-	if e.GameOwer != nil {
-		return e.GameOwer.Message
+	if e.GameOver != nil {
+		return e.GameOver.Message
 	}
 
 	if e.ShipIsWounded != nil {
