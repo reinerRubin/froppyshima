@@ -23,8 +23,19 @@ let gameState = {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  // TODO mv to ENV
-  start("ws://127.0.0.1:8080/ws")
+  let httplocation = window.location,
+      wslocation = "";
+
+  if (httplocation.protocol === "https:") {
+    wslocation = "wss:";
+  } else {
+    wslocation = "ws:";
+  }
+
+  wslocation += "//" + httplocation.host;
+  wslocation += "/ws";
+
+  start(wslocation);
 });
 
 function start(websocketServerLocation) {

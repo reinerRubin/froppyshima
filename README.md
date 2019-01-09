@@ -2,13 +2,23 @@
 ## Launch
 
 ```bash
-git clone https://github.com/reinerRubin/froppyshima.git
-cd froppyshima/
-sudo docker-compose build
-sudo docker-compose up
+$ minikube start
+$ git clone https://github.com/reinerRubin/froppyshima.git
+$ cd froppyshima/
+$ eval $(minikube docker-env)
+$ cd web/
+$ sudo -E docker build . -t froppyshima-front
+$ cd ../back
+$ sudo -E docker build . -t froppyshima-back
+$ cd ../k8c/
+$ kubectl create -f api.yaml
+$ kubectl get pods
+NAME                                            READY   STATUS    RESTARTS   AGE
+froppyshima-back-deployment-6464dbdcdd-fptqz    1/1     Running   1          45m
+froppyshima-front-deployment-58b96b579f-6vr89   1/1     Running   1          45m
+$ minikube service froppyshima-front-service --url
+http://192.168.99.100:32207 # <- follow the link & enjoy "froppyshima the game"!
 ```
-
-Open http://127.0.0.1:3000/ & enjoy "froppyshima the game"!
 
 ## Cover letter
 I have tried to make a complete "working product" with UI and a back-end part. It is quite different from the task. But if I understand properly you can do something based on it, because the main purpose of the task is to show my approach to a code. Currently an user can start a new game, play it and load an old one by a game-code.
